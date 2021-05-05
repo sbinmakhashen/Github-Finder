@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {Link} from 'react-router-dom';
 
  const UserItems = ({user: {avatar_url, login, html_url}}) => {
     return (
@@ -10,7 +11,7 @@ import PropTypes from 'prop-types';
          />
          <h3>{login}</h3>
          <div>
-           <a href={html_url} className="btn btn-dark btn-sm my-1" target="_blank">Click for more</a>
+           <Link to={`/user/${login}`} className="btn btn-dark btn-sm my-1" >Click for more</Link>
          </div>
       </div>
     )
