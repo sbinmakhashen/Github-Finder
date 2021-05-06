@@ -14,6 +14,7 @@ class App extends Component {
   state = {
     users: [],
     user: {},
+    repos: [],
     loading: false,
     alert: null
   }
@@ -30,17 +31,31 @@ class App extends Component {
       });
       this.setState({loading: false, users: res.data.items});
     }
+
     // Getting data from a single user
-    getUser = async username => {
-      this.setState({loading: true})
-      const res = await axios.get(`https://api.github.com/search/users/${username}`, {
+    getUser = async (username) => {
+      // loading spinner to true
+      this.setState({loading: true});
+      // searching for github users
+      const res = await axios.get(`https://api.github.com/users/${username}`, {
         headers: {
           Authorization: `token ${process.env.REACT_APP_GITHUB_TOKEN}`
         }
-      })
-      this.setState({loading: false, user: res.data})
+      });
+      this.setState({loading: false, user: res.data});
     }
-    
+    // Getting the user's repos
+    getUserRepos = async (username) => {
+      // loading spinner to true
+      this.setState({loading: true});
+      // searching for github users
+      const res = await axios.get(`https://api.github.com/users/${username}/repos?per_page=5&sort=created:asc`, {
+        headers: {
+          Authorization: `token ${process.env.REACT_APP_GITHUB_TOKEN}`
+        }
+      });
+      this.setState({loading: false, repos: res.data});
+    }
     // clearing the users in the clear btn
     clearUsers = () => this.setState({users: [], loading: false});
 
@@ -50,7 +65,7 @@ class App extends Component {
       setTimeout(() => this.setState({alert: null}), 4000)
     }
   render(){
-    const {users, user, loading} = this.state
+    const {users, user, repos, loading} = this.state
    return (
      <Router>
      <div className="App">
@@ -66,7 +81,7 @@ class App extends Component {
            )} />
            <Route exact path='/about' component={About} />
            <Route exact path='/user/:login' render={props => (
-             <User { ...props} getUser={this.getUser} user={user} loading={loading} />
+             <User { ...props } getUser={this.getUser} getUserRepos={this.getUserRepos} user={user} repos={repos} loading={loading} />
            )} 
            />
          </Switch>
